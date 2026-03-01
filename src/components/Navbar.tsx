@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { name: "Home", href: "#home" },
   { name: "About", href: "#about" },
-  { name: "Services", href: "#services" },
   { name: "Projects", href: "#projects" },
   { name: "Contact", href: "#contact" },
 ];
@@ -36,9 +35,10 @@ export function Navbar() {
         <a href="#home" className="flex items-center gap-2 group">
           <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-xl rotate-3 group-hover:rotate-0 transition-all duration-300">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 4V14C4 16.2091 5.79086 18 8 18H10C12.2091 18 14 16.2091 14 14V4" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-              <path d="M19 4V18" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
-              <path d="M17 18H21" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M4 10V14C4 16.2091 5.79086 18 8 18H10C12.2091 18 14 16.2091 14 14V10" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M18 4V20" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M6 4L6 6" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M12 4L12 6" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
           </div>
           <span className="font-headline font-bold text-xl tracking-tight text-foreground">
