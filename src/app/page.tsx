@@ -26,7 +26,8 @@ import {
   Facebook,
   MessageCircle,
   Send,
-  ExternalLink
+  ExternalLink,
+  Sparkles
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,7 +44,6 @@ const skills = [
   "Adobe Photoshop", "Adobe Illustrator", "After Effects", "Blender", "Figma"
 ];
 
-// Mock data for initial visualization if DB is empty
 const defaultProjects = [
   { id: "1", title: "Corporate Flyer Set", category: "Graphic", subCategory: "Flyers", imageUrl: "https://picsum.photos/seed/flyer1/800/600", description: "A set of professional flyers for a corporate event.", tags: ["Print", "Flyer"], projectUrl: "#", showViewLink: true },
   { id: "2", title: "Luxury Business Cards", category: "Graphic", subCategory: "Cards", imageUrl: "https://picsum.photos/seed/card1/800/600", description: "Minimalist business cards for high-end clients.", tags: ["Identity", "Card"], projectUrl: "#", showViewLink: true },
@@ -64,7 +64,6 @@ export default function Portfolio() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  // Firestore Data
   const projectsRef = useMemo(() => (db ? collection(db, "projects") : null), [db]);
   const { data: dbProjects = [] } = useCollection(projectsRef);
   const projects = dbProjects.length > 0 ? dbProjects : defaultProjects;
@@ -83,7 +82,6 @@ export default function Portfolio() {
   const settingsRef = useMemo(() => (db ? doc(db, "settings", "global") : null), [db]);
   const { data: settings } = useDoc(settingsRef);
 
-  // Cursor Trail Effect
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
@@ -92,7 +90,6 @@ export default function Portfolio() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Filter Logic
   const categories = ["All", "Graphic", "Web", "App Development", "3D"];
   const subCategories = useMemo(() => {
     if (filter === "All") return [];
@@ -113,12 +110,41 @@ export default function Portfolio() {
 
   if (settings?.maintenanceMode) {
     return (
-      <div className="h-screen w-full flex flex-col items-center justify-center bg-background text-center p-6">
-        <Cpu className="w-16 h-16 text-primary animate-pulse mb-6" />
-        <h1 className="text-4xl font-headline font-bold mb-4">Under Maintenance</h1>
-        <p className="text-muted-foreground max-w-md">
-          UdulaImanjith is currently upgrading the studio. We'll be back shortly with more creative magic.
-        </p>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-background text-center p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent -z-10 animate-pulse" />
+        
+        <div className="space-y-8 animate-fade-in relative z-10">
+          <div className="relative inline-block">
+            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse" />
+            <Cpu className="w-20 h-20 text-primary relative animate-bounce" />
+          </div>
+          
+          <div className="space-y-4">
+            <Badge variant="outline" className="border-primary/20 text-primary px-4 py-1 text-xs font-bold uppercase tracking-widest bg-primary/5">
+              System Update
+            </Badge>
+            <h1 className="text-5xl md:text-7xl font-headline font-bold tracking-tighter">
+              Enhancing the <span className="text-gradient">Studio</span>
+            </h1>
+            <p className="text-muted-foreground max-w-md mx-auto leading-relaxed text-sm md:text-base">
+              UdulaImanjith is currently upgrading the creative engine. We'll be back shortly with a refined digital experience.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 text-primary font-medium">
+            <Sparkles className="w-4 h-4 animate-spin" />
+            <span className="text-xs uppercase tracking-widest font-bold">Coming back better</span>
+          </div>
+        </div>
+
+        {/* Admin Toggle is kept visible for owner access */}
+        <button 
+          onClick={() => setIsAdminOpen(true)}
+          className="fixed bottom-6 right-6 w-10 h-10 bg-card/50 backdrop-blur-md border border-border rounded-full flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all shadow-lg z-[100]"
+        >
+          <Lock className="w-4 h-4" />
+        </button>
+        {isAdminOpen && <AdminTool onClose={() => setIsAdminOpen(false)} />}
       </div>
     );
   }
@@ -341,25 +367,25 @@ export default function Portfolio() {
               
               <div className="grid grid-cols-2 gap-4">
                 <Button variant="outline" className="h-20 flex flex-col gap-1 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
-                  <a href="https://wa.me/yournumber" target="_blank">
+                  <a href="https://wa.me/yournumber" target="_blank" rel="noopener noreferrer">
                     <MessageCircle className="w-6 h-6 text-green-500 group-hover:scale-110 transition-transform" />
                     <span className="text-[10px] font-bold uppercase">WhatsApp</span>
                   </a>
                 </Button>
                 <Button variant="outline" className="h-20 flex flex-col gap-1 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
-                  <a href="https://linkedin.com/in/udula" target="_blank">
+                  <a href="https://linkedin.com/in/udula" target="_blank" rel="noopener noreferrer">
                     <Linkedin className="w-6 h-6 text-blue-500 group-hover:scale-110 transition-transform" />
                     <span className="text-[10px] font-bold uppercase">LinkedIn</span>
                   </a>
                 </Button>
                 <Button variant="outline" className="h-20 flex flex-col gap-1 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
-                  <a href="https://github.com/udula" target="_blank">
+                  <a href="https://github.com/udula" target="_blank" rel="noopener noreferrer">
                     <Github className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
                     <span className="text-[10px] font-bold uppercase">GitHub</span>
                   </a>
                 </Button>
                 <Button variant="outline" className="h-20 flex flex-col gap-1 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
-                  <a href="https://facebook.com/udula" target="_blank">
+                  <a href="https://facebook.com/udula" target="_blank" rel="noopener noreferrer">
                     <Facebook className="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform" />
                     <span className="text-[10px] font-bold uppercase">Facebook</span>
                   </a>

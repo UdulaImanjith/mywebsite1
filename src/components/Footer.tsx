@@ -9,8 +9,8 @@ export function Footer() {
   return (
     <footer className="bg-secondary/50 border-t border-border pt-20 pb-10 px-6">
       <div className="max-w-7xl mx-auto space-y-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div className="col-span-1 md:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="col-span-1 md:col-span-1 space-y-6">
             <a href="#home" className="flex items-center gap-2 group">
               <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-xl rotate-3 group-hover:rotate-0 transition-all duration-300">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,16 +27,16 @@ export function Footer() {
               Crafting digital excellence through creative design and technical precision. Let's build something extraordinary together.
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary text-muted-foreground hover:text-primary transition-all">
+              <a href="https://github.com/udula" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary text-muted-foreground hover:text-primary transition-all">
                 <Github className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary text-muted-foreground hover:text-primary transition-all">
+              <a href="https://linkedin.com/in/udula" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary text-muted-foreground hover:text-primary transition-all">
                 <Linkedin className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary text-muted-foreground hover:text-primary transition-all">
+              <a href="https://instagram.com/udula" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary text-muted-foreground hover:text-primary transition-all">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary text-muted-foreground hover:text-primary transition-all">
+              <a href="https://facebook.com/udula" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary text-muted-foreground hover:text-primary transition-all">
                 <Facebook className="w-4 h-4" />
               </a>
             </div>
@@ -53,19 +53,13 @@ export function Footer() {
           </div>
 
           <div className="space-y-6">
-            <h4 className="font-headline font-bold uppercase tracking-widest text-xs">Newsletter</h4>
+            <h4 className="font-headline font-bold uppercase tracking-widest text-xs">Availability</h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Subscribe to get my latest creative insights and project updates.
+              Currently accepting new projects and collaborations. Reach out to discuss your ideas.
             </p>
-            <div className="flex items-center gap-2">
-              <input 
-                type="email" 
-                placeholder="Email Address" 
-                className="bg-background border border-border px-4 py-2 rounded-lg text-xs flex-1 focus:outline-none focus:border-primary"
-              />
-              <button className="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-all">
-                <Mail className="w-4 h-4" />
-              </button>
+            <div className="flex items-center gap-2 text-primary text-xs font-bold uppercase tracking-widest">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              Available for Freelance
             </div>
           </div>
         </div>
