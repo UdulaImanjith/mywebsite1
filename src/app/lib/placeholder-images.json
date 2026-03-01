@@ -1,0 +1,52 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Abstract 3D digital background",
+      "imageUrl": "https://picsum.photos/seed/pc1/1920/1080",
+      "imageHint": "3d abstract"
+    },
+    {
+      "id": "project-graphic-1",
+      "description": "Branding for Tech Company",
+      "imageUrl": "https://picsum.photos/seed/pc2/800/600",
+      "imageHint": "branding logo"
+    },
+    {
+      "id": "project-web-1",
+      "description": "E-commerce Website Interface",
+      "imageUrl": "https://picsum.photos/seed/pc3/800/600",
+      "imageHint": "website ui"
+    },
+    {
+      "id": "project-app-1",
+      "description": "Fintech Mobile App UI",
+      "imageUrl": "https://picsum.photos/seed/pc4/800/600",
+      "imageHint": "mobile application"
+    },
+    {
+      "id": "project-3d-1",
+      "description": "Character Animation Model",
+      "imageUrl": "https://picsum.photos/seed/pc5/800/600",
+      "imageHint": "3d character"
+    },
+    {
+      "id": "testimonial-1",
+      "description": "Client Avatar 1",
+      "imageUrl": "https://picsum.photos/seed/client1/100/100",
+      "imageHint": "portrait person"
+    },
+    {
+      "id": "testimonial-2",
+      "description": "Client Avatar 2",
+      "imageUrl": "https://picsum.photos/seed/client2/100/100",
+      "imageHint": "portrait woman"
+    },
+    {
+      "id": "testimonial-3",
+      "description": "Client Avatar 3",
+      "imageUrl": "https://picsum.photos/seed/client3/100/100",
+      "imageHint": "portrait man"
+    }
+  ]
+}
