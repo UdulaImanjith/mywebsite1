@@ -34,7 +34,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
   return (
     <Dialog open={!!project} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl bg-card border-border/50 p-0 overflow-hidden">
+      <DialogContent className="max-w-4xl bg-card border-border/50 p-0 overflow-hidden shadow-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
           <div className="relative aspect-video md:aspect-auto w-full h-full bg-black flex items-center justify-center">
             {project.videoUrl ? (
@@ -63,18 +63,18 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
             <div className="space-y-4">
               <DialogHeader>
                 <DialogTitle className="font-headline text-3xl text-primary">{project.title}</DialogTitle>
-                <DialogDescription className="text-muted-foreground text-sm uppercase tracking-widest font-semibold">
+                <DialogDescription className="text-muted-foreground text-sm uppercase tracking-widest font-semibold flex items-center gap-2">
                   {project.subCategory}
                 </DialogDescription>
               </DialogHeader>
               
-              <p className="text-foreground leading-relaxed">
+              <p className="text-foreground leading-relaxed text-sm">
                 {project.description}
               </p>
 
               <div className="flex flex-wrap gap-2 pt-4">
                 {project.tags.map((tag) => (
-                  <Badge key={tag} variant="outline" className="text-xs border-border/50 text-muted-foreground">
+                  <Badge key={tag} variant="outline" className="text-[10px] border-border/50 text-muted-foreground">
                     {tag}
                   </Badge>
                 ))}
@@ -82,17 +82,19 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
             </div>
 
             <div className="pt-8 border-t border-border/50 mt-8 flex items-center justify-between">
-              {project.showViewLink && (
+              {project.showViewLink ? (
                 <a
                   href={project.projectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-primary hover:text-accent font-semibold transition-colors"
+                  className="inline-flex items-center gap-2 text-primary hover:text-accent font-semibold transition-colors text-sm"
                 >
                   View Project <ExternalLink className="w-4 h-4" />
                 </a>
+              ) : (
+                <span className="text-xs text-muted-foreground italic">Confidential Project</span>
               )}
-              <span className="text-xs text-muted-foreground">© 2024 Udula Imanjith</span>
+              <span className="text-[10px] text-muted-foreground">© Udula Imanjith</span>
             </div>
           </div>
         </div>

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -32,7 +33,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body selection:bg-primary selection:text-primary-foreground;
+    @apply bg-background text-foreground font-body selection:bg-primary selection:text-primary-foreground overflow-x-hidden;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline tracking-tight;
@@ -51,6 +52,29 @@
   @apply transition-transform duration-300 hover:-translate-y-2;
 }
 
-.custom-cursor {
-  mix-blend-mode: difference;
+.cursor-trail {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: hsl(var(--primary) / 0.5);
+  filter: blur(8px);
+  z-index: 9999;
+  transition: transform 0.1s ease-out;
+}
+
+.cursor-dot {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  z-index: 10000;
+  transition: transform 0.05s ease-out;
 }

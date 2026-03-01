@@ -29,6 +29,18 @@
         "description": { "type": "string" }
       },
       "required": ["company", "position", "duration"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "Client feedback.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "text": { "type": "string" },
+        "avatar": { "type": "string" }
+      },
+      "required": ["name", "text"]
     }
   },
   "auth": {
@@ -42,6 +54,10 @@
     "/experiences/{experienceId}": {
       "schema": "#/backend/entities/Experience",
       "description": "Collection of professional experiences."
+    },
+    "/testimonials/{testimonialId}": {
+      "schema": "#/backend/entities/Testimonial",
+      "description": "Collection of client testimonials."
     }
   }
 }
