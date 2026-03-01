@@ -1,7 +1,8 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, X, Rocket } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -9,7 +10,6 @@ const navLinks = [
   { name: "About", href: "#about" },
   { name: "Services", href: "#services" },
   { name: "Projects", href: "#projects" },
-  { name: "Testimonials", href: "#testimonials" },
   { name: "Contact", href: "#contact" },
 ];
 
@@ -34,11 +34,15 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <a href="#home" className="flex items-center gap-2 group">
-          <div className="bg-primary p-1.5 rounded-lg group-hover:rotate-12 transition-transform">
-            <Rocket className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-xl rotate-3 group-hover:rotate-0 transition-all duration-300">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4V14C4 16.2091 5.79086 18 8 18H10C12.2091 18 14 16.2091 14 14V4" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M19 4V18" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M17 18H21" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+            </svg>
           </div>
           <span className="font-headline font-bold text-xl tracking-tight text-foreground">
-            PixelCanvas<span className="text-primary">Studio</span>
+            Udula<span className="text-primary">Imanjith</span>
           </span>
         </a>
 
@@ -55,7 +59,7 @@ export function Navbar() {
           ))}
           <a
             href="#contact"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2 rounded-full text-sm font-semibold transition-all orange-glow"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-full text-sm font-semibold transition-all orange-glow shadow-lg shadow-primary/20"
           >
             Hire Me
           </a>

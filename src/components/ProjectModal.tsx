@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -19,6 +20,8 @@ interface Project {
   imageUrl: string;
   videoUrl?: string;
   tags: string[];
+  showViewLink: boolean;
+  projectUrl: string;
 }
 
 interface ProjectModalProps {
@@ -79,12 +82,16 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
             </div>
 
             <div className="pt-8 border-t border-border/50 mt-8 flex items-center justify-between">
-              <a
-                href="#"
-                className="inline-flex items-center gap-2 text-primary hover:text-accent font-semibold transition-colors"
-              >
-                View Project <ExternalLink className="w-4 h-4" />
-              </a>
+              {project.showViewLink && (
+                <a
+                  href={project.projectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-primary hover:text-accent font-semibold transition-colors"
+                >
+                  View Project <ExternalLink className="w-4 h-4" />
+                </a>
+              )}
               <span className="text-xs text-muted-foreground">© 2024 Udula Imanjith</span>
             </div>
           </div>
