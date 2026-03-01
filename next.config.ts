@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -8,7 +9,9 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Ensure the application can be deployed to various environments
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

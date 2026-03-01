@@ -27,7 +27,9 @@ import {
   MessageCircle,
   Send,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  Zap,
+  Activity
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -71,8 +73,8 @@ export default function Portfolio() {
   const experiencesRef = useMemo(() => (db ? collection(db, "experiences") : null), [db]);
   const { data: dbExperiences = [] } = useCollection(experiencesRef);
   const experiences = dbExperiences.length > 0 ? dbExperiences : [
-    { company: "Company A", position: "Lead Designer", duration: "2021 - Present", description: "Leading creative teams in digital transformation." },
-    { company: "Company B", position: "Web Developer", duration: "2019 - 2021", description: "Building responsive web applications and APIs." }
+    { company: "Creative Minds", position: "Lead Designer", duration: "2021 - Present", description: "Leading creative teams in digital transformation." },
+    { company: "Web Wizards", position: "Web Developer", duration: "2019 - 2021", description: "Building responsive web applications and APIs." }
   ];
 
   const testimonialsRef = useMemo(() => (db ? collection(db, "testimonials") : null), [db]);
@@ -113,38 +115,57 @@ export default function Portfolio() {
       <div className="min-h-screen w-full flex flex-col items-center justify-center bg-background text-center p-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent -z-10 animate-pulse" />
         
-        <div className="space-y-8 animate-fade-in relative z-10">
+        {/* Animated Background Elements */}
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+
+        <div className="space-y-10 animate-fade-in relative z-10">
           <div className="relative inline-block">
-            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse" />
-            <Cpu className="w-20 h-20 text-primary relative animate-bounce" />
+            <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full animate-pulse scale-150" />
+            <div className="relative bg-card/50 backdrop-blur-xl border border-primary/20 p-6 rounded-2xl orange-glow">
+              <Zap className="w-12 h-12 text-primary animate-bounce" />
+            </div>
           </div>
           
-          <div className="space-y-4">
-            <Badge variant="outline" className="border-primary/20 text-primary px-4 py-1 text-xs font-bold uppercase tracking-widest bg-primary/5">
-              System Update
+          <div className="space-y-6">
+            <Badge variant="outline" className="border-primary/30 text-primary px-6 py-1.5 text-xs font-bold uppercase tracking-[0.3em] bg-primary/5">
+              System Core: Upgrading
             </Badge>
-            <h1 className="text-5xl md:text-7xl font-headline font-bold tracking-tighter">
-              Enhancing the <span className="text-gradient">Studio</span>
+            <h1 className="text-6xl md:text-8xl font-headline font-bold tracking-tighter">
+              Leveling <span className="text-gradient">Up</span>
             </h1>
-            <p className="text-muted-foreground max-w-md mx-auto leading-relaxed text-sm md:text-base">
-              UdulaImanjith is currently upgrading the creative engine. We'll be back shortly with a refined digital experience.
+            <p className="text-muted-foreground max-w-lg mx-auto leading-relaxed text-sm md:text-lg">
+              UdulaImanjith Studio is currently undergoing a performance overhaul. We're recalibrating the creative engine for a faster, bolder digital experience.
             </p>
           </div>
 
-          <div className="flex items-center justify-center gap-2 text-primary font-medium">
-            <Sparkles className="w-4 h-4 animate-spin" />
-            <span className="text-xs uppercase tracking-widest font-bold">Coming back better</span>
+          <div className="flex flex-col items-center gap-6">
+            <div className="flex items-center gap-4 text-primary font-medium">
+              <Activity className="w-5 h-5 animate-pulse" />
+              <span className="text-sm uppercase tracking-widest font-bold">Optimization in progress</span>
+            </div>
+            
+            <div className="w-64 h-1 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full bg-primary w-1/2 animate-[progress_3s_infinite_ease-in-out]" />
+            </div>
           </div>
         </div>
 
-        {/* Admin Toggle is kept visible for owner access */}
+        {/* Admin Access Toggle */}
         <button 
           onClick={() => setIsAdminOpen(true)}
-          className="fixed bottom-6 right-6 w-10 h-10 bg-card/50 backdrop-blur-md border border-border rounded-full flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all shadow-lg z-[100]"
+          className="fixed bottom-8 right-8 w-12 h-12 bg-card/40 backdrop-blur-md border border-white/5 rounded-2xl flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all shadow-2xl group z-[100]"
         >
-          <Lock className="w-4 h-4" />
+          <Lock className="w-5 h-5 group-hover:scale-110 transition-transform" />
         </button>
         {isAdminOpen && <AdminTool onClose={() => setIsAdminOpen(false)} />}
+        
+        <style jsx>{`
+          @keyframes progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
+          }
+        `}</style>
       </div>
     );
   }
