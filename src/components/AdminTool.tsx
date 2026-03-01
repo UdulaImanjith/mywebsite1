@@ -19,14 +19,15 @@ import {
   Briefcase, 
   MessageSquare, 
   LayoutGrid, 
-  Eye, 
-  EyeOff, 
-  Edit 
+  Edit,
+  Lock
 } from "lucide-react";
-import { useCollection } from "@/firebase";
-import { useFirestore } from "@/firebase";
+import { useCollection, useFirestore } from "@/firebase";
 import { collection, doc, addDoc, updateDoc, deleteDoc, setDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
+
+// --- ADMIN PASSWORD ---
+const ADMIN_PASSWORD = "admin123";
 
 interface AdminToolProps {
   onClose: () => void;
@@ -39,28 +40,39 @@ export function AdminTool({ onClose }: AdminToolProps) {
   const { toast } = useToast();
 
   const projectsRef = db ? collection(db, "projects") : null;
-  const { data: projects = [] } = useCollection(projectsRef ? projectsRef : null);
+  const { data: projects = [] } = useCollection(projectsRef);
 
   const testimonialsRef = db ? collection(db, "testimonials") : null;
-  const { data: testimonials = [] } = useCollection(testimonialsRef ? testimonialsRef : null);
+  const { data: testimonials = [] } = useCollection(testimonialsRef);
+
+  const experiencesRef = db ? collection(db, "experiences") : null;
+  const { data: experiences = [] } = useCollection(experiencesRef);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "admin123") { // Prototype simple password
+    if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
     } else {
       toast({ title: "Error", description: "Incorrect password", variant: "destructive" });
     }
   };
 
-  const handleUpdateProject = (id: string, data: any) => {
+  const handleUpdate = (col: string, id: string, data: any) => {
     if (!db) return;
-    updateDoc(doc(db, "projects", id), data);
+    updateDoc(doc(db, col, id), data);
+    toast({ title: "Success", description: "Item updated successfully" });
   };
 
-  const handleDeleteProject = (id: string) => {
+  const handleDelete = (col: string, id: string) => {
     if (!db) return;
-    deleteDoc(doc(db, "projects", id));
+    deleteDoc(doc(db, col, id));
+    toast({ title: "Deleted", description: "Item removed" });
+  };
+
+  const handleAdd = async (col: string, data: any) => {
+    if (!db) return;
+    await addDoc(collection(db, col), data);
+    toast({ title: "Success", description: "Item added successfully" });
   };
 
   if (!isAuthenticated) {
@@ -92,8 +104,8 @@ export function AdminTool({ onClose }: AdminToolProps) {
 
   return (
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[200] flex items-center justify-center p-6 overflow-y-auto">
-      <Card className="max-w-5xl w-full border-primary/20 bg-card shadow-2xl relative h-[80vh] flex flex-col">
-        <Button variant="ghost" size="icon" className="absolute right-4 top-4" onClick={onClose}>
+      <Card className="max-w-6xl w-full border-primary/20 bg-card shadow-2xl relative h-[90vh] flex flex-col">
+        <Button variant="ghost" size="icon" className="absolute right-4 top-4 z-20" onClick={onClose}>
           <X className="w-5 h-5" />
         </Button>
         <CardHeader>
@@ -102,7 +114,7 @@ export function AdminTool({ onClose }: AdminToolProps) {
             Control Center
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto">
+        <CardContent className="flex-1 overflow-y-auto scrollbar-hide">
           <Tabs defaultValue="projects" className="w-full">
             <TabsList className="grid w-full grid-cols-4 bg-background/50 mb-6 sticky top-0 z-10">
               <TabsTrigger value="projects" className="flex items-center gap-2"><LayoutGrid className="w-4 h-4" /> Projects</TabsTrigger>
@@ -120,56 +132,87 @@ export function AdminTool({ onClose }: AdminToolProps) {
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl bg-card border-border">
                     <DialogHeader><DialogTitle>Create New Project</DialogTitle></DialogHeader>
-                    <ProjectForm onSave={(data) => db && projectsRef && addDoc(projectsRef, data)} />
+                    <ProjectForm onSave={(data) => handleAdd("projects", data)} />
                   </DialogContent>
                 </Dialog>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {projects.map((p: any) => (
-                  <div key={p.id} className="p-4 rounded-xl bg-background border flex items-center justify-between group">
-                    <div className="flex items-center gap-4">
-                      <img src={p.imageUrl} className="w-12 h-12 rounded object-cover border" alt="" />
-                      <div>
-                        <p className="font-bold text-sm leading-tight">{p.title}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{p.category} • {p.subCategory}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="w-4 h-4" /></Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl bg-card border-border">
-                          <DialogHeader><DialogTitle>Edit Project</DialogTitle></DialogHeader>
-                          <ProjectForm 
-                            initialData={p} 
-                            onSave={(data) => handleUpdateProject(p.id, data)} 
-                          />
-                        </DialogContent>
-                      </Dialog>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDeleteProject(p.id)}>
-                        <Trash className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
+                  <AdminItemCard 
+                    key={p.id} 
+                    title={p.title} 
+                    subtitle={`${p.category} • ${p.subCategory}`}
+                    image={p.imageUrl}
+                    onEdit={() => {}} // Controlled by Dialog internally
+                    onDelete={() => handleDelete("projects", p.id)}
+                  >
+                    <ProjectForm 
+                      initialData={p} 
+                      onSave={(data) => handleUpdate("projects", p.id, data)} 
+                    />
+                  </AdminItemCard>
                 ))}
               </div>
             </TabsContent>
 
             <TabsContent value="testimonials" className="space-y-4">
               <div className="flex justify-between items-center">
-                <h4 className="font-bold">Client Feedback</h4>
-                <Button size="sm" variant="outline"><Plus className="w-4 h-4 mr-2" /> Add Testimonial</Button>
+                <h4 className="font-bold">Client Feedback ({testimonials.length})</h4>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="bg-primary text-white"><Plus className="w-4 h-4 mr-2" /> Add Testimonial</Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl bg-card border-border">
+                    <DialogHeader><DialogTitle>New Testimonial</DialogTitle></DialogHeader>
+                    <TestimonialForm onSave={(data) => handleAdd("testimonials", data)} />
+                  </DialogContent>
+                </Dialog>
               </div>
-              <div className="p-12 text-center border-2 border-dashed rounded-xl">
-                <p className="text-muted-foreground italic">Connect with testimonials collection...</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {testimonials.map((t: any) => (
+                  <AdminItemCard 
+                    key={t.id} 
+                    title={t.name} 
+                    subtitle={t.role}
+                    image={t.avatar}
+                    onDelete={() => handleDelete("testimonials", t.id)}
+                  >
+                    <TestimonialForm 
+                      initialData={t} 
+                      onSave={(data) => handleUpdate("testimonials", t.id, data)} 
+                    />
+                  </AdminItemCard>
+                ))}
               </div>
             </TabsContent>
 
             <TabsContent value="experience" className="space-y-4">
-              <h4 className="font-bold">Work History</h4>
-              <div className="p-8 text-center border-2 border-dashed rounded-xl">
-                <p className="text-muted-foreground italic">Add your professional milestones here.</p>
+              <div className="flex justify-between items-center">
+                <h4 className="font-bold">Work History ({experiences.length})</h4>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="bg-primary text-white"><Plus className="w-4 h-4 mr-2" /> Add Experience</Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl bg-card border-border">
+                    <DialogHeader><DialogTitle>Add Experience</DialogTitle></DialogHeader>
+                    <ExperienceForm onSave={(data) => handleAdd("experiences", data)} />
+                  </DialogContent>
+                </Dialog>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {experiences.map((exp: any) => (
+                  <AdminItemCard 
+                    key={exp.id} 
+                    title={exp.position} 
+                    subtitle={`${exp.company} • ${exp.duration}`}
+                    onDelete={() => handleDelete("experiences", exp.id)}
+                  >
+                    <ExperienceForm 
+                      initialData={exp} 
+                      onSave={(data) => handleUpdate("experiences", exp.id, data)} 
+                    />
+                  </AdminItemCard>
+                ))}
               </div>
             </TabsContent>
 
@@ -183,11 +226,38 @@ export function AdminTool({ onClose }: AdminToolProps) {
                   <Switch onCheckedChange={(checked) => db && setDoc(doc(db, "settings", "global"), { maintenanceMode: checked }, { merge: true })} />
                 </div>
               </div>
-              <Button className="w-full bg-primary text-white"><Save className="w-4 h-4 mr-2" /> Apply Global Changes</Button>
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function AdminItemCard({ title, subtitle, image, children, onDelete }: any) {
+  return (
+    <div className="p-4 rounded-xl bg-background border flex items-center justify-between group">
+      <div className="flex items-center gap-4">
+        {image && <img src={image} className="w-12 h-12 rounded object-cover border" alt="" />}
+        <div>
+          <p className="font-bold text-sm leading-tight">{title}</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{subtitle}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-1">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="w-4 h-4" /></Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl bg-card border-border overflow-y-auto max-h-[80vh]">
+            <DialogHeader><DialogTitle>Edit Details</DialogTitle></DialogHeader>
+            {children}
+          </DialogContent>
+        </Dialog>
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={onDelete}>
+          <Trash className="w-4 h-4" />
+        </Button>
+      </div>
     </div>
   );
 }
@@ -231,14 +301,68 @@ function ProjectForm({ initialData, onSave }: { initialData?: any; onSave: (data
         <Textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
       </div>
       <div className="space-y-2">
-        <Label>Project Link</Label>
+        <Label>Project Link (Visit Project URL)</Label>
         <Input value={formData.projectUrl} onChange={(e) => setFormData({...formData, projectUrl: e.target.value})} />
       </div>
       <div className="flex items-center justify-between p-4 bg-background border rounded-lg">
         <Label>Show "View Project" Link</Label>
         <Switch checked={formData.showViewLink} onCheckedChange={(checked) => setFormData({...formData, showViewLink: checked})} />
       </div>
-      <Button className="w-full" onClick={() => onSave(formData)}>Save Project Details</Button>
+      <Button className="w-full bg-primary text-white" onClick={() => onSave(formData)}>Save Project</Button>
+    </div>
+  );
+}
+
+function TestimonialForm({ initialData, onSave }: any) {
+  const [formData, setFormData] = useState(initialData || { name: "", role: "", text: "", avatar: "" });
+  return (
+    <div className="space-y-4 py-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Name</Label>
+          <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+        </div>
+        <div className="space-y-2">
+          <Label>Role</Label>
+          <Input value={formData.role} onChange={(e) => setFormData({...formData, role: e.target.value})} />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label>Avatar URL</Label>
+        <Input value={formData.avatar} onChange={(e) => setFormData({...formData, avatar: e.target.value})} />
+      </div>
+      <div className="space-y-2">
+        <Label>Testimonial Text</Label>
+        <Textarea value={formData.text} onChange={(e) => setFormData({...formData, text: e.target.value})} />
+      </div>
+      <Button className="w-full bg-primary text-white" onClick={() => onSave(formData)}>Save Testimonial</Button>
+    </div>
+  );
+}
+
+function ExperienceForm({ initialData, onSave }: any) {
+  const [formData, setFormData] = useState(initialData || { company: "", position: "", duration: "", description: "" });
+  return (
+    <div className="space-y-4 py-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Company</Label>
+          <Input value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} />
+        </div>
+        <div className="space-y-2">
+          <Label>Position</Label>
+          <Input value={formData.position} onChange={(e) => setFormData({...formData, position: e.target.value})} />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label>Duration (e.g. 2021 - Present)</Label>
+        <Input value={formData.duration} onChange={(e) => setFormData({...formData, duration: e.target.value})} />
+      </div>
+      <div className="space-y-2">
+        <Label>Description</Label>
+        <Textarea value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
+      </div>
+      <Button className="w-full bg-primary text-white" onClick={() => onSave(formData)}>Save Experience</Button>
     </div>
   );
 }
