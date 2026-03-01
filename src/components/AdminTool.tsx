@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -100,8 +99,8 @@ export function AdminTool({ onClose }: AdminToolProps) {
 
   if (!isAuthenticated) {
     return (
-      <div className="fixed inset-0 bg-background/90 backdrop-blur-sm z-[200] flex items-center justify-center p-6">
-        <Card className="max-w-md w-full border-primary/20 bg-card">
+      <div className="fixed inset-0 bg-background/90 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+        <Card className="max-w-md w-full border-primary/20 bg-card z-[110]">
           <CardHeader>
             <CardTitle className="text-center font-headline">Administration Access</CardTitle>
           </CardHeader>
@@ -126,8 +125,8 @@ export function AdminTool({ onClose }: AdminToolProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[200] flex items-center justify-center p-6 overflow-y-auto">
-      <Card className="max-w-6xl w-full border-primary/20 bg-card shadow-2xl relative h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[100] flex items-center justify-center p-6 overflow-y-auto">
+      <Card className="max-w-6xl w-full border-primary/20 bg-card shadow-2xl relative h-[90vh] flex flex-col z-[110]">
         <Button variant="ghost" size="icon" className="absolute right-4 top-4 z-20" onClick={onClose}>
           <X className="w-5 h-5" />
         </Button>
@@ -153,7 +152,7 @@ export function AdminTool({ onClose }: AdminToolProps) {
                   <DialogTrigger asChild>
                     <Button size="sm" className="bg-primary text-white"><Plus className="w-4 h-4 mr-2" /> Add Project</Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl bg-card border-border">
+                  <DialogContent className="max-w-2xl bg-card border-border overflow-y-auto max-h-[90vh]">
                     <DialogHeader><DialogTitle>Create New Project</DialogTitle></DialogHeader>
                     <ProjectForm onSave={(data) => handleAdd("projects", data)} isProcessing={isProcessing} />
                   </DialogContent>
@@ -186,7 +185,7 @@ export function AdminTool({ onClose }: AdminToolProps) {
                   <DialogTrigger asChild>
                     <Button size="sm" className="bg-primary text-white"><Plus className="w-4 h-4 mr-2" /> Add Testimonial</Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl bg-card border-border">
+                  <DialogContent className="max-w-2xl bg-card border-border overflow-y-auto max-h-[90vh]">
                     <DialogHeader><DialogTitle>New Testimonial</DialogTitle></DialogHeader>
                     <TestimonialForm onSave={(data) => handleAdd("testimonials", data)} isProcessing={isProcessing} />
                   </DialogContent>
@@ -219,7 +218,7 @@ export function AdminTool({ onClose }: AdminToolProps) {
                   <DialogTrigger asChild>
                     <Button size="sm" className="bg-primary text-white"><Plus className="w-4 h-4 mr-2" /> Add Experience</Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl bg-card border-border">
+                  <DialogContent className="max-w-2xl bg-card border-border overflow-y-auto max-h-[90vh]">
                     <DialogHeader><DialogTitle>Add Experience</DialogTitle></DialogHeader>
                     <ExperienceForm onSave={(data) => handleAdd("experiences", data)} isProcessing={isProcessing} />
                   </DialogContent>
@@ -279,7 +278,7 @@ function AdminItemCard({ title, subtitle, image, children, onDelete, isProcessin
           <DialogTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8"><Edit className="w-4 h-4" /></Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl bg-card border-border overflow-y-auto max-h-[80vh]">
+          <DialogContent className="max-w-2xl bg-card border-border overflow-y-auto max-h-[90vh]">
             <DialogHeader><DialogTitle>Edit Details</DialogTitle></DialogHeader>
             {children}
           </DialogContent>
