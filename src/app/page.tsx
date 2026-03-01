@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AdminTool } from "@/components/AdminTool";
@@ -24,19 +24,36 @@ import {
   Github,
   Linkedin,
   Facebook,
-  MessageCircle
+  MessageCircle,
+  Send,
+  ExternalLink
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useCollection, useDoc, useFirestore } from "@/firebase";
 import { collection, query, orderBy, doc } from "firebase/firestore";
+import Image from "next/image";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const skills = [
-  "Adobe Photoshop", "Adobe Illustrator", "After Effects", "Blender", 
-  "Next.js", "React", "TypeScript", "Tailwind CSS", "Node.js", 
-  "Firebase", "Three.js", "UI/UX Design"
+  "Adobe Photoshop", "Adobe Illustrator", "After Effects", "Blender", "Figma"
+];
+
+// Mock data for initial visualization if DB is empty
+const defaultProjects = [
+  { id: "1", title: "Corporate Flyer Set", category: "Graphic", subCategory: "Flyers", imageUrl: "https://picsum.photos/seed/flyer1/800/600", description: "A set of professional flyers for a corporate event.", tags: ["Print", "Flyer"], projectUrl: "#", showViewLink: true },
+  { id: "2", title: "Luxury Business Cards", category: "Graphic", subCategory: "Cards", imageUrl: "https://picsum.photos/seed/card1/800/600", description: "Minimalist business cards for high-end clients.", tags: ["Identity", "Card"], projectUrl: "#", showViewLink: true },
+  { id: "3", title: "E-commerce Platform", category: "Web", subCategory: "E-commerce", imageUrl: "https://picsum.photos/seed/web1/800/600", description: "Full-stack e-commerce solution with React.", tags: ["React", "Node"], projectUrl: "#", showViewLink: true },
+  { id: "4", title: "3D Character Hero", category: "3D", subCategory: "Animation", imageUrl: "https://picsum.photos/seed/3d1/800/600", description: "Rigged and animated character for a game project.", tags: ["Blender", "Rigging"], projectUrl: "#", showViewLink: true },
+];
+
+const defaultTestimonials = [
+  { id: "t1", name: "John Smith", role: "Marketing Director", text: "Udula delivered exceptional work on our branding. Highly recommended!", avatar: "https://picsum.photos/seed/t1/100/100" },
+  { id: "t2", name: "Sarah Williams", role: "CEO, TechFlow", text: "The website developed by Udula exceeded our expectations in every way.", avatar: "https://picsum.photos/seed/t2/100/100" },
 ];
 
 export default function Portfolio() {
@@ -48,13 +65,22 @@ export default function Portfolio() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   // Firestore Data
-  const projectsQuery = db ? query(collection(db, "projects")) : null;
-  const { data: projects = [] } = useCollection(projectsQuery);
+  const projectsRef = useMemo(() => (db ? collection(db, "projects") : null), [db]);
+  const { data: dbProjects = [] } = useCollection(projectsRef);
+  const projects = dbProjects.length > 0 ? dbProjects : defaultProjects;
 
-  const experiencesQuery = db ? query(collection(db, "experiences")) : null;
-  const { data: experiences = [] } = useCollection(experiencesQuery);
+  const experiencesRef = useMemo(() => (db ? collection(db, "experiences") : null), [db]);
+  const { data: dbExperiences = [] } = useCollection(experiencesRef);
+  const experiences = dbExperiences.length > 0 ? dbExperiences : [
+    { company: "Company A", position: "Lead Designer", duration: "2021 - Present", description: "Leading creative teams in digital transformation." },
+    { company: "Company B", position: "Web Developer", duration: "2019 - 2021", description: "Building responsive web applications and APIs." }
+  ];
 
-  const settingsRef = db ? doc(db, "settings", "global") : null;
+  const testimonialsRef = useMemo(() => (db ? collection(db, "testimonials") : null), [db]);
+  const { data: dbTestimonials = [] } = useCollection(testimonialsRef);
+  const testimonials = dbTestimonials.length > 0 ? dbTestimonials : defaultTestimonials;
+
+  const settingsRef = useMemo(() => (db ? doc(db, "settings", "global") : null), [db]);
   const { data: settings } = useDoc(settingsRef);
 
   // Cursor Trail Effect
@@ -68,15 +94,22 @@ export default function Portfolio() {
 
   // Filter Logic
   const categories = ["All", "Graphic", "Web", "App Development", "3D"];
-  const subCategories = filter === "All" 
-    ? [] 
-    : ["All", ...Array.from(new Set(projects.filter((p: any) => p.category === filter).map((p: any) => p.subCategory)))];
+  const subCategories = useMemo(() => {
+    if (filter === "All") return [];
+    const subs = projects
+      .filter((p: any) => p.category === filter)
+      .map((p: any) => p.subCategory)
+      .filter(Boolean);
+    return ["All", ...Array.from(new Set(subs))];
+  }, [filter, projects]);
 
   const filteredProjects = projects.filter((p: any) => {
     const matchesCat = filter === "All" || p.category === filter;
     const matchesSub = subFilter === "All" || p.subCategory === subFilter;
     return matchesCat && matchesSub;
   });
+
+  const profileImage = PlaceHolderImages.find(img => img.id === "profile-photo")?.imageUrl || "https://picsum.photos/seed/udula/600/800";
 
   if (settings?.maintenanceMode) {
     return (
@@ -131,67 +164,79 @@ export default function Portfolio() {
 
       {/* About Section */}
       <section id="about" className="py-24 px-6 bg-secondary/30">
-        <div className="max-w-7xl mx-auto space-y-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-            <div className="space-y-8">
-              <div className="space-y-2">
-                <span className="text-primary font-bold uppercase tracking-widest text-sm">Expertise</span>
-                <h2 className="text-4xl md:text-5xl font-headline font-bold">Skills & Experience</h2>
-              </div>
-              
-              <div className="space-y-8">
-                <h3 className="text-xl font-headline font-semibold flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-primary" /> Professional Timeline
-                </h3>
-                <div className="space-y-8">
-                  {experiences.length > 0 ? experiences.map((exp: any, idx: number) => (
-                    <div key={idx} className="border-l-2 border-primary/20 pl-6 relative">
-                      <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-primary" />
-                      <h4 className="font-bold text-lg">{exp.position}</h4>
-                      <p className="text-primary font-medium text-sm mb-2">{exp.company} • {exp.duration}</p>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{exp.description}</p>
-                    </div>
-                  )) : (
-                    <p className="text-muted-foreground italic">Experience details coming soon...</p>
-                  )}
-                </div>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left side: Photo */}
+            <div className="relative group mx-auto lg:mx-0 max-w-[450px]">
+              <div className="absolute -inset-4 bg-primary/20 rounded-3xl blur-2xl group-hover:bg-primary/30 transition-all duration-500" />
+              <div className="relative rounded-3xl overflow-hidden border border-white/10 aspect-[3/4]">
+                <img 
+                  src={profileImage} 
+                  alt="Udula Imanjith" 
+                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
+                />
               </div>
             </div>
 
-            <div className="space-y-12">
+            {/* Right side: Content */}
+            <div className="space-y-10">
+              <div className="space-y-4">
+                <span className="text-primary font-bold uppercase tracking-widest text-sm">About Me</span>
+                <h2 className="text-4xl md:text-5xl font-headline font-bold">Creative Visionary</h2>
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
+                  I am a passionate creator dedicated to pushing the boundaries of digital design. With a focus on user experience and visual storytelling, I transform ideas into compelling realities across multiple platforms.
+                </p>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-8">
+                <div>
+                  <p className="text-3xl font-bold text-gradient">150+</p>
+                  <p className="text-[10px] uppercase text-muted-foreground tracking-widest font-bold">Projects Done</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-gradient">80+</p>
+                  <p className="text-[10px] uppercase text-muted-foreground tracking-widest font-bold">Happy Clients</p>
+                </div>
+                <div>
+                  <p className="text-3xl font-bold text-gradient">6+</p>
+                  <p className="text-[10px] uppercase text-muted-foreground tracking-widest font-bold">Years Exp</p>
+                </div>
+              </div>
+
+              {/* Work Experience */}
               <div className="space-y-6">
                 <h3 className="text-xl font-headline font-semibold flex items-center gap-2">
-                  <Wand2 className="w-5 h-5 text-primary" /> Core Competencies
+                  <Briefcase className="w-5 h-5 text-primary" /> Professional Experience
                 </h3>
-                <div className="flex flex-wrap gap-3">
-                  {skills.map((skill) => (
-                    <Badge key={skill} variant="secondary" className="px-4 py-2 text-sm bg-card hover:bg-primary/10 hover:text-primary transition-colors cursor-default border-border/50">
-                      {skill}
-                    </Badge>
+                <div className="space-y-6">
+                  {experiences.map((exp: any, idx: number) => (
+                    <div key={idx} className="flex gap-4">
+                      <div className="flex flex-col items-center">
+                        <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                        <div className="w-0.5 h-full bg-primary/10 mt-2" />
+                      </div>
+                      <div className="pb-4">
+                        <h4 className="font-bold text-lg leading-none">{exp.position}</h4>
+                        <p className="text-primary text-sm font-medium mt-1">{exp.company} • {exp.duration}</p>
+                        <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{exp.description}</p>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
 
-              <div className="p-8 bg-card/50 rounded-3xl border border-border/50 space-y-4">
+              {/* Skills */}
+              <div className="space-y-4">
                 <h3 className="text-xl font-headline font-semibold flex items-center gap-2">
-                  <Layers className="w-5 h-5 text-primary" /> My Approach
+                  <Wand2 className="w-5 h-5 text-primary" /> Tool Mastery
                 </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  I believe in a user-centric design philosophy where every line of code and every design choice serves a purpose. I bridge the gap between imagination and execution.
-                </p>
-                <div className="grid grid-cols-3 gap-4 pt-4">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">150+</p>
-                    <p className="text-[10px] uppercase text-muted-foreground">Projects</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">80+</p>
-                    <p className="text-[10px] uppercase text-muted-foreground">Clients</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold">6+</p>
-                    <p className="text-[10px] uppercase text-muted-foreground">Years</p>
-                  </div>
+                <div className="flex flex-wrap gap-3">
+                  {skills.map((skill) => (
+                    <Badge key={skill} variant="secondary" className="px-4 py-2 text-xs bg-card hover:bg-primary/10 hover:text-primary transition-colors cursor-default border-border/50">
+                      {skill}
+                    </Badge>
+                  ))}
                 </div>
               </div>
             </div>
@@ -257,40 +302,92 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contact" className="py-24 px-6 bg-secondary/10">
-        <div className="max-w-3xl mx-auto text-center space-y-12">
-          <div className="space-y-4">
-            <span className="text-primary font-bold uppercase tracking-widest text-sm">Contact</span>
-            <h2 className="text-4xl md:text-5xl font-headline font-bold">Let's Connect</h2>
-            <p className="text-muted-foreground">Interested in working together? Reach out through any of these platforms.</p>
+      {/* Testimonials Section */}
+      <section className="py-24 px-6 bg-secondary/10">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="text-center space-y-4">
+            <span className="text-primary font-bold uppercase tracking-widest text-sm">Kind Words</span>
+            <h2 className="text-4xl md:text-5xl font-headline font-bold">Client Testimonials</h2>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-24 flex flex-col gap-2 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
-              <a href="https://wa.me/yournumber" target="_blank">
-                <MessageCircle className="w-6 h-6 text-green-500 group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-semibold">WhatsApp</span>
-              </a>
-            </Button>
-            <Button variant="outline" className="h-24 flex flex-col gap-2 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
-              <a href="https://linkedin.com/in/udula" target="_blank">
-                <Linkedin className="w-6 h-6 text-blue-500 group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-semibold">LinkedIn</span>
-              </a>
-            </Button>
-            <Button variant="outline" className="h-24 flex flex-col gap-2 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
-              <a href="https://github.com/udula" target="_blank">
-                <Github className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-semibold">GitHub</span>
-              </a>
-            </Button>
-            <Button variant="outline" className="h-24 flex flex-col gap-2 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
-              <a href="https://facebook.com/udula" target="_blank">
-                <Facebook className="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-semibold">Facebook</span>
-              </a>
-            </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {testimonials.map((t: any) => (
+              <Card key={t.id} className="bg-card border-white/5 hover:border-primary/20 transition-all p-8 space-y-6">
+                <CardContent className="p-0 space-y-4">
+                  <div className="flex items-center gap-4">
+                    <img src={t.avatar} className="w-12 h-12 rounded-full border border-primary/20" alt={t.name} />
+                    <div>
+                      <h4 className="font-bold text-sm">{t.name}</h4>
+                      <p className="text-[10px] text-muted-foreground uppercase">{t.role}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm italic text-muted-foreground">"{t.text}"</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <span className="text-primary font-bold uppercase tracking-widest text-sm">Contact</span>
+                <h2 className="text-4xl md:text-5xl font-headline font-bold">Let's Connect</h2>
+                <p className="text-muted-foreground max-w-md">Interested in working together? Send me a message or reach out through social platforms.</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <Button variant="outline" className="h-20 flex flex-col gap-1 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
+                  <a href="https://wa.me/yournumber" target="_blank">
+                    <MessageCircle className="w-6 h-6 text-green-500 group-hover:scale-110 transition-transform" />
+                    <span className="text-[10px] font-bold uppercase">WhatsApp</span>
+                  </a>
+                </Button>
+                <Button variant="outline" className="h-20 flex flex-col gap-1 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
+                  <a href="https://linkedin.com/in/udula" target="_blank">
+                    <Linkedin className="w-6 h-6 text-blue-500 group-hover:scale-110 transition-transform" />
+                    <span className="text-[10px] font-bold uppercase">LinkedIn</span>
+                  </a>
+                </Button>
+                <Button variant="outline" className="h-20 flex flex-col gap-1 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
+                  <a href="https://github.com/udula" target="_blank">
+                    <Github className="w-6 h-6 text-foreground group-hover:scale-110 transition-transform" />
+                    <span className="text-[10px] font-bold uppercase">GitHub</span>
+                  </a>
+                </Button>
+                <Button variant="outline" className="h-20 flex flex-col gap-1 rounded-2xl border-border/50 hover:border-primary/50 group" asChild>
+                  <a href="https://facebook.com/udula" target="_blank">
+                    <Facebook className="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform" />
+                    <span className="text-[10px] font-bold uppercase">Facebook</span>
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            <Card className="bg-card/50 border-white/5 p-8 rounded-3xl">
+              <form className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase text-muted-foreground">Full Name</label>
+                    <Input placeholder="John Doe" className="bg-background border-white/10" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase text-muted-foreground">Email Address</label>
+                    <Input placeholder="john@example.com" type="email" className="bg-background border-white/10" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase text-muted-foreground">Message</label>
+                  <Textarea placeholder="Tell me about your project..." className="bg-background border-white/10 min-h-[150px]" />
+                </div>
+                <Button className="w-full bg-primary text-white h-12 rounded-xl orange-glow font-bold uppercase">
+                  Send Message <Send className="w-4 h-4 ml-2" />
+                </Button>
+              </form>
+            </Card>
           </div>
         </div>
       </section>

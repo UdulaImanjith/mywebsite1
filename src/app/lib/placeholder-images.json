@@ -1,3 +1,4 @@
+
 {
   "placeholderImages": [
     {
@@ -7,26 +8,32 @@
       "imageHint": "3d abstract"
     },
     {
+      "id": "profile-photo",
+      "description": "Professional portrait of Udula Imanjith",
+      "imageUrl": "https://picsum.photos/seed/udula/600/800",
+      "imageHint": "portrait man"
+    },
+    {
       "id": "project-graphic-1",
-      "description": "Branding for Tech Company",
+      "description": "Professional Flyer Design",
       "imageUrl": "https://picsum.photos/seed/pc2/800/600",
-      "imageHint": "branding logo"
+      "imageHint": "flyer design"
     },
     {
       "id": "project-web-1",
-      "description": "E-commerce Website Interface",
+      "description": "Modern E-commerce Interface",
       "imageUrl": "https://picsum.photos/seed/pc3/800/600",
       "imageHint": "website ui"
     },
     {
       "id": "project-app-1",
-      "description": "Fintech Mobile App UI",
+      "description": "Fintech Mobile Application",
       "imageUrl": "https://picsum.photos/seed/pc4/800/600",
-      "imageHint": "mobile application"
+      "imageHint": "mobile app"
     },
     {
       "id": "project-3d-1",
-      "description": "Character Animation Model",
+      "description": "3D Character Model",
       "imageUrl": "https://picsum.photos/seed/pc5/800/600",
       "imageHint": "3d character"
     },
